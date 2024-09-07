@@ -1,0 +1,62 @@
+# Python-related
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.whl
+*.egg
+*.egg-info/
+dist/
+build/
+env/
+.venv/
+# Virtual environments
+.env
+.venv
+venv/
+ENV/
+
+# Scala-related
+*.class
+target/
+lib_managed/
+src_managed/
+.project
+.cache
+.ensime
+.idea
+metals.sbt
+
+# Spark logs and temp files
+spark-warehouse/
+derby.log
+*.log
+
+# Java-related
+*.jar
+*.war
+*.nar
+*.ear
+*.class
+*.jnilib
+*.dll
+target/
+hs_err_pid*
+
+# macOS-specific
+.DS_Store
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+
+# IDEs and Text Editors
+.vscode/
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# System files
+Thumbs.db
