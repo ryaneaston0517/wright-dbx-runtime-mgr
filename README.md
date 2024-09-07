@@ -14,11 +14,11 @@ This CLI tool helps you manage Python, Scala, Spark, and Java versions locally t
   ```bash
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/yourusername/wright-dbx-runtime-mgr/main/install_wright.sh)"
   ```
-- **Install a runtime environment:
+- **Install a runtime environment**:
   ```bash
   wright install databricks-10.4
   ```
-- **Activate specific environment:
+- **Activate specific environment**:
   ```bash
   wright activate databricks-11.3
   ```
