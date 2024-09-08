@@ -12,7 +12,7 @@ This CLI tool helps you manage Python, Scala, Spark, and Java versions locally t
 ## Usage:
 1. **Install wright**: 
   ```bash
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/yourusername/wright-dbx-runtime-mgr/main/install_wright.sh)"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ryaneaston0517/wright-dbx-runtime-mgr/main/install_wright.sh)"
   ```
 2. **Install a runtime environment**:
   ```bash
