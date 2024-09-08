@@ -1,0 +1,42 @@
+# Databricks Long-Term Support (LTS) Runtime Versions
+databricks-9.3:
+  python: "3.8.10"
+  scala: "2.12.10"
+  spark: "3.1.2"
+  java: "Zulu 8.58"
+
+databricks-10.4:
+  python: "3.9.5"
+  scala: "2.12.15"
+  spark: "3.2.1"
+  java: "Zulu 8.58"
+
+databricks-11.3:
+  python: "3.9.6"
+  scala: "2.12.16"
+  spark: "3.3.0"
+  java: "Zulu 8.60"
+
+databricks-12.2:
+  python: "3.10.4"
+  scala: "2.12.17"
+  spark: "3.3.2"
+  java: "Zulu 8.66"
+
+databricks-13.3:
+  python: "3.10.11"
+  scala: "2.12.17"
+  spark: "3.4.0"
+  java: "Zulu 11.64"
+
+databricks-14.2:
+  python: "3.11.0"
+  scala: "2.12.18"
+  spark: "3.4.1"
+  java: "Zulu 11.66"
+
+databricks-15.4:
+  python: "3.11.0"
+  scala: "2.12.18"
+  spark: "3.5.0"
+  java: "Zulu 8.78"
