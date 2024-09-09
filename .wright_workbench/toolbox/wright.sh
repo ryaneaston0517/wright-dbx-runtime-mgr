@@ -1,30 +1,23 @@
-#!/bin/bash
+#!/bin/zsh
 
-# Define the available subcommands
-case "$1" in
-  shelve)
-    shift # remove 'shelve' from the argument list
-    ~/.workbench/.toolbox/shelver.sh "$@" # call shelver.sh with any additional arguments
-    ;;
-  install)
-    echo "🔧 Installing software..."
-    # Add your install logic here
-    ;;
-  update)
-    echo "🔄 Updating software versions..."
-    # Add your update logic here
-    ;;
-  list)
-    echo "📂 Listing software versions..."
-    # Add a command to list active versions here
-    ;;
-  *)
-    echo "Wright Package Manager"
-    echo "Usage: wright [command]"
-    echo "Commands:"
-    echo "  shelve     Organize and shelve your active software versions"
-    echo "  install    Install a new software"
-    echo "  update     Update installed software"
-    echo "  list       List current software versions"
-    ;;
+# Path to where scripts are stored
+WRIGHT_WORKBENCH="$HOME/.wright_workbench"
+
+# Parse subcommands and arguments
+COMMAND=$1
+ARGUMENT=$2
+
+case "$COMMAND" in
+    activate)
+        if [ -n "$ARGUMENT" ]; then
+            echo "Activating environment for $ARGUMENT..."
+            source "$WRIGHT_WORKBENCH/.toolbox/activate.sh" "$ARGUMENT"
+        else
+            echo "Please specify an environment to activate, e.g., 'wright activate databricks-15.4'."
+        fi
+        ;;
+    *)
+        echo "Unknown command: $COMMAND"
+        echo "Available commands: activate"
+        ;;
 esac
