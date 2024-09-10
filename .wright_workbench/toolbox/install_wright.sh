@@ -2,8 +2,30 @@
 
 # Define the WRIGHT_DIR Path
 WRIGHT_WORKBENCH_PATH="$HOME/.wright_workbench"
-WRIGHT_TOOLBOX_PATH="$WRIGHT_WORKBENCH_PATH/.toolbox"
+WRIGHT_TOOLBOX_PATH="$WRIGHT_WORKBENCH_PATH/toolbox"
 WRIGHT_BIN_PATH="$WRIGHT_WORKBENCH_PATH/bin"
+
+# Function to check for jq and yq installation
+check_install_tools() {
+    # Check if jq is installed
+    if ! command -v jq &> /dev/null; then
+        echo "❌ jq is not installed. Installing jq..."
+        "$WRIGHT_TOOLBOX_PATH/install_jq.sh"
+    else
+        echo "✅ jq is already installed."
+    fi
+
+    # Check if yq is installed
+    if ! command -v yq &> /dev/null; then
+        echo "❌ yq is not installed. Installing yq..."
+        "$WRIGHT_TOOLBOX_PATH/install_yq.sh"
+    else
+        echo "✅ yq is already installed."
+    fi
+}
+
+# Check for tool installation
+check_install_tools
 
 # Check if the WRIGHT_BIN_PATH is already in .zshrc and if the directory exists
 if grep -q "export PATH=.*$WRIGHT_BIN_PATH.*" ~/.zshrc && [ -d "$WRIGHT_BIN_PATH" ]; then
