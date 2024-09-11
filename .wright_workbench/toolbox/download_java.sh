@@ -33,7 +33,7 @@ detect_arch() {
 }
 
 # Function to download the appropriate Zulu JDK .tar.gz file
-download_java() {
+download_tool() {
   ZULU_BASE_URL="https://cdn.azul.com/zulu/bin"
 
   # Use the passed-in Java version or fall back to a default
@@ -125,10 +125,7 @@ download_java() {
         curl -o "$OUTPUT_FILE" "$FINAL_URL"
         MATCH_FOUND=true
 
-        # # Call the function to install Java after download
-        # install_zulu_jdk "$OUTPUT_FILE"
-
-        # break # stop the loop after the first match
+        break # stop the loop after the first match
     done
 
     # If no match was found after checking all files, print the no match message
@@ -149,23 +146,8 @@ echo "Detected architecture: $ARCH"
 
 # Download and install the JDK
 # Accept parameters from command line
-JAVA_VERSION="$1"
+VERSION="$1"
 DOWNLOAD_LOCATION="$2"
 
 # Download and install the JDK
 download_java "$JAVA_VERSION" "$DOWNLOAD_LOCATION"
-# download_zulu_jdk
-# result=$(download_zulu_jdk)
-# echo $result
-# install_zulu_jdk
-
-# # Optional: Set JAVA_HOME and add to PATH
-# echo "Setting up environment variables..."
-# if [[ "$OS" == "macos" ]]; then
-#   echo 'export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu*/Contents/Home' >> ~/.bash_profile
-# else
-#   echo 'export JAVA_HOME=/usr/lib/jvm/zulu*/bin' >> ~/.bashrc
-# fi
-# echo 'export PATH=$JAVA_HOME/bin:$PATH' >> ~/.bash_profile
-
-# echo "Installation complete. Please restart your terminal or source your profile file to use the new Java version."
