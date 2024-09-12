@@ -22,6 +22,14 @@ check_install_tools() {
     else
         echo "✅ yq is already installed."
     fi
+
+    # Check if maven is installed
+    if ! command -v mvn &> /dev/null; then
+        echo "❌ maven is not installed. Installing maven..."
+        "$WRIGHT_TOOLBOX_PATH/install_maven.sh"
+    else
+        echo "✅ maven is already installed."
+    fi
 }
 
 # Check for tool installation

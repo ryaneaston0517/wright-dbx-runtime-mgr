@@ -46,25 +46,23 @@ echo "🔍 Extracting configuration for $DB_RUNTIME..."
 download_tool_to_drawer() {
     local TOOL_VERSION="$1"
     local TOOL_NAME="$2"
-    echo "🌐 Downloading $TOOL_NAME-$TOOL_VERSION..."
-    "$SCRIPT_DIR/download_${TOOL_NAME}.sh" "$TOOL_VERSION" "${DRAWER_DIR}/${TOOL_NAME}"
-    echo "✅ $TOOL_NAME-$TOOL_VERSION downloaded to drawer."
-}
 
-# Function to download the tool if not found in bin or drawer
-download_tool_to_drawer() {
-    local TOOL_VERSION="$1"
-    local TOOL_NAME="$2"
+    if [[ "$TOOL_NAME" == *"spark"* ]]; then
+        local TOOL_SCRIPT="spark"
+    else
+        local TOOL_SCRIPT="$TOOL_NAME"
+    fi
+
     echo "🌐 Downloading $TOOL_NAME-$TOOL_VERSION..."
-    "$SCRIPT_DIR/download_${TOOL_NAME}.sh" "$TOOL_VERSION" "${DRAWER_DIR}/${TOOL_NAME}"
-    echo "✅ $TOOL_NAME-$TOOL_VERSION downloaded to drawer."
+
+    "$SCRIPT_DIR/download_${TOOL_SCRIPT}.sh" "$TOOL_VERSION" "${DRAWER_DIR}/${TOOL_NAME}"
+    echo "✅ Spark $TOOL_NAME-$TOOL_VERSION downloaded to drawer."
 }
 
 # Function to move the tool from drawer to bin if present
 move_from_drawer_to_bin() {
     local TOOL_TARBALL_PATH="$1"
     echo "🗂️ Found $TOOL_TARBALL_PATH in the drawer. Moving to bin..."
-    # Execute the download_java.sh script
     echo "🔧 Activating $TOOL_TARBALL_PATH..."
     "$SCRIPT_DIR/activate_tool.sh" "$TOOL_TARBALL_PATH"
     echo "✅ $TOOL_TARBALL_PATH moved to bin."
@@ -105,12 +103,17 @@ create_symlinks() {
 
 # Handle environments with hyphens or special characters by quoting the environment name
 declare -A VERSIONS
-TOOLS=("python", "java")
-# TOOLS=("python" "scala" "spark" "java")
+TOOLS=("spark" "scala" "python" "java") 
 
 for TOOL in "${TOOLS[@]}"; do
     # Extract version using yq and check if valid
-    TOOL_VERSION=$(yq e '."'${DB_RUNTIME}'".'"${TOOL}"'' "$RUNTIME_FILE")
+    if [[ "$TOOL" == *"spark"* ]]; then
+        # If TOOL contains "spark" but isn't exactly "spark", use the version of "spark"
+        TOOL_VERSION=$(yq e '."'${DB_RUNTIME}'".spark' "$RUNTIME_FILE")
+    else
+        # Otherwise, extract the version normally for the tool
+        TOOL_VERSION=$(yq e '."'${DB_RUNTIME}'".'"${TOOL}"'' "$RUNTIME_FILE")
+    fi
     if [ -z "$TOOL_VERSION" ]; then
         echo "❌ Error: Invalid Databricks runtime or missing configuration for $TOOL in $DB_RUNTIME."
         exit 1
@@ -142,20 +145,20 @@ for TOOL in "${TOOLS[@]}"; do
 
         # Move from drawer to bin
         echo "📦 $TOOL_FOLDER_NAME is not in the bin. Attempting to move from the drawer..."
-        move_from_drawer_to_bin "$TOOL_TARBALL_PATH"
+        # move_from_drawer_to_bin "$TOOL_TARBALL_PATH"
     else
         echo "✅ $TOOL_FOLDER_NAME is already installed in the bin."
     fi
 
     # Create symlinks for the tool
     echo "🔗 Creating symlinks for $TOOL_FOLDER_NAME..."
-    create_symlinks "$BIN_DIR/$TOOL_FOLDER_NAME"
+    # create_symlinks "$BIN_DIR/$TOOL_FOLDER_NAME"
 
     # Update the environment variable in the shell profile
     echo "🔧 Updating shell configuration for $TOOL..."
 
     if typeset -f "update_shell_config_${TOOL}" > /dev/null; then
-        update_shell_config_${TOOL} "$BIN_DIR/$TOOL_FOLDER_NAME"
+        # update_shell_config_${TOOL} "$BIN_DIR/$TOOL_FOLDER_NAME"
     else
         echo "⚠️ No update function for $TOOL. Skipping shell config update."
     fi

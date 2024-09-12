@@ -76,3 +76,15 @@ update_shell_config_python() {
     update_shell_config_alias "python" "python3"
     update_shell_config_alias "pip" "pip3"
 }
+
+update_shell_config_scala() {
+    local HOME_PATH="$1"
+    echo "🔍 Checking if SCALA_HOME is set correctly..."
+    update_shell_config_block "SCALA_HOME" "$HOME_PATH"
+}
+
+update_shell_config_spark() {
+    local HOME_PATH="$1"
+    echo "🔍 Checking if SPARK_HOME is set correctly..."
+    update_shell_config_block "SPARK_HOME" "$HOME_PATH"
+}

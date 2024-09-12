@@ -24,23 +24,25 @@ mkdir -p "$FINAL_INSTALL_DIR"
 # Check if the tarball exists before extracting
 if [ ! -f "$TARBALL_PATH" ]; then
     echo "❌ Error: Tarball not found at $TARBALL_PATH. Exiting."
-    return 1
+    exit 1
 fi
 
 # Extract the tarball into the new folder
 echo "🛠 Extracting $TARBALL_PATH into $FINAL_INSTALL_DIR"
-tar -xvzf "$TARBALL_PATH" -C "$FINAL_INSTALL_DIR" --strip-components=1
+tar -xzf "$TARBALL_PATH" -C "$FINAL_INSTALL_DIR" --strip-components=1 --no-same-owner --no-same-permissions
 
 # Output the installation location
 if [ $? -eq 0 ]; then
-    echo "✅ successfully installed to: $FINAL_INSTALL_DIR"
+    echo "✅ Successfully installed to: $FINAL_INSTALL_DIR"
 else
     echo "❌ Error: Failed to extract the tarball."
+    exit 1
 fi
 
 # Check if the extracted software needs to be compiled
 echo "🔍 Checking if compilation is required..."
 
+# Check if 'configure' script exists
 if [ -f "$FINAL_INSTALL_DIR/configure" ]; then
     echo "⚙️ 'configure' script found. Compilation is required."
     
@@ -56,14 +58,27 @@ if [ -f "$FINAL_INSTALL_DIR/configure" ]; then
             echo "🔧 Running 'make install'..."
             make install
             echo "✅ Compilation and installation complete."
+            
+            # Overwrite the original tarball with the built version
+            echo "📦 Compressing the built version to overwrite the original tarball..."
+            tar -czf "$TARBALL_PATH" -C "$FINAL_INSTALL_DIR" .
+            
+            if [ $? -eq 0 ]; then
+                echo "✅ Built version compressed and saved to: $TARBALL_PATH"
+            else
+                echo "❌ Error: Failed to compress the tarball."
+                exit 1
+            fi
         else
             echo "❌ Error during 'make'."
-            return 1
+            exit 1
         fi
     else
         echo "❌ Error during './configure'."
-        return 1
+        exit 1
     fi
+
+# Check if 'Makefile' exists and no 'configure'
 elif [ -f "$FINAL_INSTALL_DIR/Makefile" ]; then
     echo "⚙️ 'Makefile' found but no 'configure'. Running 'make' directly."
 
@@ -75,12 +90,57 @@ elif [ -f "$FINAL_INSTALL_DIR/Makefile" ]; then
         echo "🔧 Running 'make install'..."
         make install
         echo "✅ Compilation and installation complete."
+        
+        # Overwrite the original tarball with the built version
+        echo "📦 Compressing the built version to overwrite the original tarball..."
+        tar -czf "$TARBALL_PATH" -C "$FINAL_INSTALL_DIR" .
+        
+        if [ $? -eq 0 ]; then
+            echo "✅ Built version compressed and saved to: $TARBALL_PATH"
+        else
+            echo "❌ Error: Failed to compress the tarball."
+            exit 1
+        fi
     else
         echo "❌ Error during 'make'."
-        return 1
+        exit 1
+    fi
+
+# Check if it's Spark (by looking for "/spark-" in the path)
+elif [[ "$FINAL_INSTALL_DIR" == *"/spark-"* ]]; then
+    echo "🔍 Detected Spark source directory. Building Spark with Maven..."
+
+    # Check if Maven is installed
+    if ! command -v mvn &> /dev/null; then
+        echo "❌ Error: Maven is not installed or not in PATH."
+        exit 1
+    fi
+
+    cd "$FINAL_INSTALL_DIR"
+
+    # Build Spark using Maven
+    mvn -DskipTests clean package
+
+    # Check if the build was successful
+    if [ $? -eq 0 ]; then
+        echo "✅ Spark built successfully!"
+
+        # Overwrite the original tarball with the built version
+        echo "📦 Compressing built Spark version to overwrite the original tarball..."
+        tar -czf "$TARBALL_PATH" -C "$FINAL_INSTALL_DIR" .
+
+        if [ $? -eq 0 ]; then
+            echo "✅ Built Spark version compressed and stored in: $TARBALL_PATH"
+        else
+            echo "❌ Error: Failed to compress the tarball."
+            exit 1
+        fi
+    else
+        echo "❌ Error: Spark build failed."
+        exit 1
     fi
 else
-    echo "📦 No 'configure' or 'Makefile' found. This is likely a precompiled binary."
+    echo "📦 No 'configure', 'Makefile', or Spark source found. This is likely a precompiled binary."
 fi
 
 echo "🎉 Done!"
