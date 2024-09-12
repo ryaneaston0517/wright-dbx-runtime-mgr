@@ -145,20 +145,20 @@ for TOOL in "${TOOLS[@]}"; do
 
         # Move from drawer to bin
         echo "📦 $TOOL_FOLDER_NAME is not in the bin. Attempting to move from the drawer..."
-        # move_from_drawer_to_bin "$TOOL_TARBALL_PATH"
+        move_from_drawer_to_bin "$TOOL_TARBALL_PATH"
     else
         echo "✅ $TOOL_FOLDER_NAME is already installed in the bin."
     fi
 
     # Create symlinks for the tool
     echo "🔗 Creating symlinks for $TOOL_FOLDER_NAME..."
-    # create_symlinks "$BIN_DIR/$TOOL_FOLDER_NAME"
+    create_symlinks "$BIN_DIR/$TOOL_FOLDER_NAME"
 
     # Update the environment variable in the shell profile
     echo "🔧 Updating shell configuration for $TOOL..."
 
     if typeset -f "update_shell_config_${TOOL}" > /dev/null; then
-        # update_shell_config_${TOOL} "$BIN_DIR/$TOOL_FOLDER_NAME"
+        update_shell_config_${TOOL} "$BIN_DIR/$TOOL_FOLDER_NAME"
     else
         echo "⚠️ No update function for $TOOL. Skipping shell config update."
     fi
